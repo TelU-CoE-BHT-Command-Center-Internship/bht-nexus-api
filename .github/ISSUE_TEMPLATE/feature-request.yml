@@ -1,0 +1,74 @@
+name: Usulan Fitur
+description: Usulkan kemampuan baru berdasarkan masalah pengguna yang jelas.
+title: "[Feature]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Mulai dari masalah dan hasil yang dibutuhkan, bukan hanya nama teknologi atau bentuk solusi.
+
+  - type: checkboxes
+    id: initial_checks
+    attributes:
+      label: Pemeriksaan awal
+      options:
+        - label: Saya sudah mencari issue serupa dan belum menemukan usulan yang sama.
+          required: true
+        - label: Usulan tidak memuat data rahasia atau informasi pribadi.
+          required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Masalah pengguna
+      description: Siapa yang mengalami masalah, kapan terjadi, dan mengapa penting?
+    validations:
+      required: true
+
+  - type: textarea
+    id: desired_outcome
+    attributes:
+      label: Hasil yang diinginkan
+      description: Jelaskan hasil akhir dari sudut pandang pengguna tanpa mengunci implementasi terlalu dini.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_scope
+    attributes:
+      label: Ruang lingkup yang diusulkan
+      description: Tuliskan hal yang perlu masuk dan hal yang sebaiknya tidak masuk.
+      placeholder: |
+        Masuk:
+        - ...
+
+        Tidak masuk:
+        - ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Tanda bahwa fitur selesai
+      description: Tuliskan hasil yang dapat diperiksa atau diuji.
+      placeholder: |
+        - Pengguna dapat ...
+        - Sistem menolak ...
+        - Audit log mencatat ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: data_security
+    attributes:
+      label: Dampak data dan keamanan
+      description: Jelaskan data yang dibaca atau ditulis, izin yang dibutuhkan, serta risiko privasi atau keamanan.
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Cara lain yang sudah dipertimbangkan
+      description: Opsional. Jelaskan solusi sementara atau alternatif yang pernah dicoba.

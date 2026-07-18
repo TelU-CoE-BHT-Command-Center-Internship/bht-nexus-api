@@ -1,0 +1,5 @@
+# Default owners for every path in this repository.
+* @Zendin110206 @Facalder @Liamours
+
+# Protect the ownership definition itself.
+/.github/CODEOWNERS @Zendin110206 @Facalder @Liamours
