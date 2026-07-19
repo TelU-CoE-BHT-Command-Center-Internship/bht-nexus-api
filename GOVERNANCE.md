@@ -30,9 +30,9 @@ Pembagian orang untuk setiap tanggung jawab akan mengikuti kesepakatan tim dan d
 
 ## Tahap Persiapan Repositori
 
-Pada tahap persiapan awal, maintainer dapat mengirim dokumentasi dan konfigurasi dasar yang sudah disepakati langsung ke `main` setelah audit menyeluruh. Pengecualian ini tidak mencakup dependency atau implementasi aplikasi.
+Tahap persiapan awal mencakup struktur kosong, standar repository, dan satu bootstrap resmi NestJS tanpa fitur bisnis. Rangkaian tersebut boleh masuk langsung ke `main` sebagai pengecualian terdokumentasi setelah seluruh pemeriksaan lulus dan diff dibaca menyeluruh.
 
-Ketika implementasi dimulai, perubahan menggunakan branch dan pull request. Perlindungan `main` serta pemeriksaan CI diwajibkan setelah workflow nyata tersedia dan terbukti lulus.
+Pengecualian berakhir setelah fondasi NestJS tersedia. Mulai dari modul atau perilaku aplikasi pertama, perubahan menggunakan issue, branch, pull request, CI, dan review manusia. Perlindungan `main` diaktifkan ketika paket GitHub organisasi mendukung repository private; sebelum itu aturan yang sama dijalankan sebagai prosedur wajib tim.
 
 ## Catatan Keputusan
 

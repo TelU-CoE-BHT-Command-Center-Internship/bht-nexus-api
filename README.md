@@ -4,7 +4,7 @@
 
 **Layanan backend terpadu untuk data, otomasi, scraper, dan RAG dokumen BHT.**
 
-![Status](https://img.shields.io/badge/status-fondasi_awal-475569)
+![Status](https://img.shields.io/badge/status-fondasi_NestJS-475569)
 ![Akses](https://img.shields.io/badge/akses-private-7c3aed)
 ![Node.js](https://img.shields.io/badge/Node.js-24_LTS-339933)
 ![NestJS](https://img.shields.io/badge/NestJS-11-e0234e)
@@ -21,17 +21,20 @@ Backend dan antarmuka web dikelola dalam repositori terpisah. Dengan batas ini, 
 
 ## Status Saat Ini
 
-Repositori berada pada tahap **fondasi awal**. Struktur direktori dan standar kolaborasi sudah disiapkan, tetapi aplikasi belum dapat dijalankan karena dependency dan source code NestJS belum ditambahkan.
+Repositori berada pada tahap **fondasi NestJS yang dapat dijalankan**. Generator resmi Nest CLI sudah membentuk aplikasi dasar, dependency sudah dikunci melalui `package-lock.json`, dan pemeriksaan format, lint, tipe, test, serta build sudah tersedia.
+
+Fondasi ini belum memuat fitur bisnis, koneksi database, scraper, atau RAG. Respons dasar hanya membuktikan bahwa runtime, struktur NestJS, pengujian, dan CI bekerja sebelum modul BHT-Nexus mulai ditambahkan.
 
 | Bagian | Status |
 |---|---|
 | Struktur repositori | Tersedia |
 | Standar Git dan kolaborasi | Tersedia |
 | Dokumentasi dasar | Tersedia |
-| Aplikasi NestJS | Belum ditambahkan |
+| Aplikasi NestJS dasar | Tersedia dan dapat dijalankan |
 | Database dan migration | Belum ditambahkan |
 | Worker scraper dan RAG | Belum diintegrasikan |
-| CI/CD dan deployment | Belum ditambahkan |
+| CI minimum | Tersedia |
+| Deployment | Belum ditambahkan |
 
 Status ini sengaja ditulis apa adanya. Repositori belum mengklaim fitur, pengujian, atau kesiapan deployment yang memang belum tersedia.
 
@@ -87,23 +90,113 @@ Backend dibangun sebagai **modular monolith**: satu aplikasi backend yang dibagi
 
 ```text
 .
-├── .github/      # kepemilikan, issue form, dan template kolaborasi
-├── .vscode/      # pengaturan bersama VS Code pada tahap berikutnya
+├── .github/      # kepemilikan, issue form, workflow, dan otomasi dependency
+├── .vscode/      # rekomendasi alat dan pengaturan workspace bersama
 ├── docs/         # keputusan dan dokumentasi teknis
-├── drizzle/      # migration database yang akan dibuat Drizzle
+├── drizzle/      # migration database yang kelak dibuat Drizzle
 ├── scripts/      # otomasi pengembangan dan operasi
 ├── src/          # aplikasi NestJS utama
 ├── test/         # pengujian lintas modul dan layanan
 └── workers/      # worker Python untuk scraper dan RAG
 ```
 
-Folder source code masih dipertahankan dengan `.gitkeep` sampai implementasi nyata dibuat. Penjelasan keputusan teknis akan disimpan di `docs/decisions/` agar alasan perubahan tetap dapat ditelusuri.
+Folder fitur yang belum dikerjakan masih dipertahankan dengan `.gitkeep`. Berkas dasar `src/main.ts`, `src/app.module.ts`, controller, service, serta test berasal dari pola resmi NestJS dan menjadi titik awal yang dapat diverifikasi. Penjelasan keputusan teknis disimpan di `docs/decisions/` agar alasan perubahan tetap dapat ditelusuri.
 
 ## Memulai Pengembangan
 
-Belum ada perintah instalasi atau menjalankan aplikasi pada tahap ini. Jangan menjalankan `npm install` sebelum fondasi NestJS dan `package.json` resmi ditambahkan.
+Prasyarat:
 
-Versi Node.js yang dituju tercatat dalam `.node-version`. Aturan kontribusi dan pola commit tersedia di [CONTRIBUTING.md](CONTRIBUTING.md).
+- Node.js 24 LTS;
+- npm 11;
+- Git;
+- PowerShell 7 pada Windows.
+
+Repositori ini bersifat private. Pastikan akun GitHub sudah menjadi anggota proyek dan dapat membuka halaman repositori sebelum melakukan clone.
+
+### 1. Clone repository
+
+Buka PowerShell pada folder tempat proyek akan disimpan, lalu jalankan:
+
+```powershell
+git clone https://github.com/TelU-CoE-BHT-Command-Center-Internship/bht-nexus-api.git
+Set-Location bht-nexus-api
+```
+
+`git clone` mengunduh repository beserta riwayat perubahannya. `Set-Location` memindahkan terminal ke dalam folder repository. Jika GitHub meminta autentikasi, masuk melalui jendela browser atau Git Credential Manager menggunakan akun yang mempunyai akses; password akun biasa tidak dipakai sebagai password Git.
+
+Jika repository sudah pernah di-clone, jangan clone ulang. Sinkronkan salinan yang ada:
+
+```powershell
+git switch main
+git pull --ff-only origin main
+```
+
+`--ff-only` mencegah Git membuat merge commit yang tidak disengaja saat hanya ingin mengambil pembaruan.
+
+### 2. Aktifkan versi Node.js proyek
+
+Proyek menyimpan versi Node.js pada `.node-version`. Jika menggunakan fnm:
+
+```powershell
+fnm env --use-on-cd --shell powershell | Out-String | Invoke-Expression
+fnm install
+fnm use
+node --version
+npm --version
+```
+
+Hasil `node --version` harus diawali `v24.` dan `npm --version` harus diawali `11.`. Jika `fnm` belum tersedia, ikuti dokumentasi [fnm](https://github.com/Schniz/fnm) atau minta pendampingan tim sebelum mengganti versi proyek.
+
+### 3. Buka folder di Visual Studio Code
+
+1. buka Visual Studio Code;
+2. pilih **File → Open Folder**;
+3. pilih folder `bht-nexus-api` hasil clone;
+4. pilih **Yes, I trust the authors** karena repository berasal dari organisasi tim sendiri;
+5. buka **Terminal → New Terminal** dan pastikan nama folder aktif berakhir dengan `bht-nexus-api`.
+
+### 4. Pasang dependency
+
+Di terminal VS Code, jalankan:
+
+```powershell
+npm ci
+```
+
+Gunakan `npm ci`, bukan `npm install`, untuk pemakaian harian setelah clone. `npm ci` memasang versi persis yang sudah dikunci di `package-lock.json` sehingga hasil setiap anggota tim sama.
+
+### 5. Periksa fondasi
+
+```powershell
+npm run check
+```
+
+Perintah tersebut memeriksa format, lint, tipe TypeScript, unit test, end-to-end test, dan build. Jangan mulai mengubah kode jika pemeriksaan awal gagal; simpan output error lalu koordinasikan dengan tim.
+
+### 6. Jalankan aplikasi
+
+```powershell
+npm run start:dev
+```
+
+Buka `http://localhost:3000/api/v1`. Fondasi yang sehat mengembalikan:
+
+```json
+{
+  "name": "bht-nexus-api",
+  "status": "ok"
+}
+```
+
+Biarkan terminal tersebut tetap berjalan selama aplikasi digunakan. Tekan `Ctrl+C` untuk menghentikannya.
+
+### 7. Sebelum mulai mengerjakan tugas
+
+```powershell
+git status
+```
+
+Working tree (daftar perubahan lokal) seharusnya bersih. Setelah fondasi ini, pekerjaan baru tidak dilakukan langsung di `main`; ikuti alur issue, branch, dan pull request pada [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Keamanan dan Dukungan
 

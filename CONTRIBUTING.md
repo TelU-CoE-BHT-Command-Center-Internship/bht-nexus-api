@@ -13,9 +13,9 @@ Panduan ini menjaga agar setiap perubahan mudah dipahami, diuji, ditinjau, dan d
 
 ## Tahap Persiapan
 
-Selama repositori hanya berisi persiapan yang telah disepakati dan belum menyentuh implementasi aplikasi, maintainer dapat mengirim commit persiapan kecil langsung ke `main` setelah pemeriksaan menyeluruh.
+Repository pernah menerima commit persiapan langsung ke `main` untuk struktur kosong, dokumen kolaborasi, dan bootstrap resmi NestJS. Pengecualian terakhir tersebut hanya berlaku untuk fondasi yang belum memuat fitur bisnis dan harus melewati format, lint, typecheck, test, build, pemeriksaan secret, serta peninjauan diff.
 
-Pengecualian ini berakhir ketika dependency, source code, database, worker, CI, atau konfigurasi runtime mulai dibuat. Setelah itu perubahan menggunakan branch kerja dan pull request.
+Setelah fondasi NestJS masuk ke `main`, pengecualian berakhir. Penambahan modul, endpoint, database, worker, dependency baru, perubahan CI, atau konfigurasi runtime berikutnya menggunakan branch kerja dan pull request.
 
 ## Alur Kerja Setelah Implementasi Dimulai
 
@@ -29,6 +29,13 @@ Pengecualian ini berakhir ketika dependency, source code, database, worker, CI, 
 8. buka pull request;
 9. tanggapi review;
 10. gabungkan hanya setelah seluruh pemeriksaan lulus.
+
+Pemeriksaan minimum untuk repository API:
+
+```powershell
+npm ci
+npm run check
+```
 
 Contoh nama branch:
 
