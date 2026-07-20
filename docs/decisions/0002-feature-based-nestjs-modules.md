@@ -1,8 +1,8 @@
 # ADR-0002: Modul NestJS dikelompokkan berdasarkan fitur bisnis
 
-- **Status:** Accepted
+- **Status:** Proposed
 - **Tanggal:** 2026-07-20
-- **Pemilik keputusan:** Tim BHT-Nexus
+- **Pemilik keputusan:** Tim BHT-Nexus (menunggu pembahasan)
 - **Terkait:** arsitektur modular monolith dan repository web terpisah
 
 ## Konteks
@@ -11,7 +11,7 @@ BHT-Nexus akan memiliki banyak bagian, antara lain autentikasi, anggota, publika
 
 NestJS secara resmi mengelompokkan controller dan provider yang saling berkaitan di dalam feature module. BHT-Nexus juga memisahkan antarmuka pengguna ke repository web Next.js, sehingga API tidak mempunyai lapisan *view* halaman.
 
-## Keputusan
+## Usulan
 
 API dibangun sebagai modular monolith (satu aplikasi backend yang dibagi menjadi modul dengan tanggung jawab jelas). Setiap fitur bisnis memiliki folder sendiri di bawah `src/modules`.
 
@@ -47,6 +47,8 @@ Komponen lintas fitur seperti konfigurasi, database, logging, keamanan, dan erro
 - lapisan halaman tetap menjadi tanggung jawab repository web Next.js.
 
 ## Konsekuensi
+
+Konsekuensi berikut berlaku apabila usulan disetujui. Sampai tim mengambil keputusan, struktur fondasi yang sudah dapat diuji dipertahankan dan perubahan struktur diajukan melalui branch serta pull request.
 
 - tidak dibuat folder global `src/controllers`, `src/services`, `src/models`, dan `src/views` untuk menampung seluruh fitur;
 - perubahan struktur dilakukan melalui branch dan pull request, bukan dengan menginisialisasi ulang repository;

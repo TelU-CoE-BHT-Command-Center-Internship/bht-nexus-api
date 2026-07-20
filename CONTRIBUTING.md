@@ -53,7 +53,7 @@ npm run hooks:validate
 npm run check
 ```
 
-Proyek memakai **npm dan `package-lock.json`** sebagai satu-satunya alur package. Jangan menjalankan migrasi ke pnpm atau Yarn dan jangan menambahkan lockfile kedua tanpa ADR (catatan keputusan arsitektur) yang telah disetujui.
+Baseline yang dapat dijalankan saat ini memakai **npm dan `package-lock.json`**. Jangan mencampur npm, pnpm, atau Yarn dalam satu tree. Usulan perpindahan package manager tetap terbuka, tetapi memerlukan ADR (catatan keputusan arsitektur) dan satu pull request yang sekaligus menyelaraskan lockfile, CI, Git hooks, dokumentasi, serta perintah pengembangan.
 
 ## Pemeriksaan Otomatis Lokal
 
@@ -66,9 +66,9 @@ Hook hanya mendeteksi masalah. Hook tidak melakukan auto-fix dan tidak menambahk
 
 ## Struktur Fitur NestJS
 
-Backend disusun sebagai modular monolith (satu aplikasi dengan batas modul yang jelas). Kode dikelompokkan berdasarkan fitur bisnis, misalnya `src/modules/publications`, lalu controller, service, DTO, dan repository fitur tersebut berada di dalam modul yang sama.
+Baseline pemulihan menyusun backend sebagai modular monolith (satu aplikasi dengan batas modul yang jelas). Usulan awalnya adalah mengelompokkan kode berdasarkan fitur bisnis, misalnya `src/modules/publications`, lalu controller, service, DTO, dan repository fitur tersebut berada di dalam modul yang sama.
 
-Jangan membuat folder global `controllers`, `services`, `models`, dan `views` untuk seluruh aplikasi. Pola global tersebut cepat bercampur ketika jumlah fitur bertambah. Lapisan tampilan atau *view* berada di repository web Next.js, bukan di API NestJS.
+Struktur global `controllers`, `services`, `models`, dan `views` belum menjadi keputusan final. Sebelum mengubah baseline, tampilkan contoh struktur dan dampaknya melalui ADR serta pull request. Lapisan tampilan atau *view* tetap berada di repository web Next.js, bukan di API NestJS.
 
 Contoh nama branch:
 

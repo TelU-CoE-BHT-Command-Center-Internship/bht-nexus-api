@@ -1,8 +1,8 @@
 # ADR-0001: npm dan Lefthook sebagai alur pengembangan Node.js
 
-- **Status:** Accepted
+- **Status:** Proposed
 - **Tanggal:** 2026-07-20
-- **Pemilik keputusan:** Tim BHT-Nexus
+- **Pemilik keputusan:** Tim BHT-Nexus (menunggu pembahasan)
 - **Terkait:** fondasi NestJS, CI, dan panduan kontribusi
 
 ## Konteks
@@ -11,7 +11,7 @@ Fondasi API menggunakan Node.js 24 LTS dan menghasilkan `package-lock.json` mela
 
 Tim juga membutuhkan pemeriksaan cepat sebelum perubahan masuk ke commit atau dikirim ke GitHub. Pemeriksaan lokal harus membantu pengembang tanpa mengubah file atau staging secara diam-diam, dan tidak boleh dianggap sebagai pengganti CI.
 
-## Keputusan
+## Usulan
 
 1. npm 11 dan `package-lock.json` menjadi satu-satunya alur package Node.js pada repository API.
 2. `npm ci` dipakai setelah clone dan pada CI agar versi dependency mengikuti lockfile secara tepat.
@@ -20,7 +20,7 @@ Tim juga membutuhkan pemeriksaan cepat sebelum perubahan masuk ke commit atau di
 5. `pre-push` menjalankan unit test, end-to-end test, dan build.
 6. Hook tidak melakukan auto-fix atau memasukkan file ke staging secara otomatis.
 7. GitHub CI tetap menjadi pemeriksaan resmi sebelum perubahan digabungkan.
-8. Perubahan package manager memerlukan ADR pengganti dan migrasi atomik (seluruh konfigurasi, lockfile, dokumentasi, hook, dan CI berubah bersama dalam satu pull request).
+8. Jika tim memilih package manager lain, migrasi dilakukan secara atomik (seluruh konfigurasi, lockfile, dokumentasi, hook, dan CI berubah bersama dalam satu pull request).
 
 ## Alasan
 
@@ -31,6 +31,8 @@ Tim juga membutuhkan pemeriksaan cepat sebelum perubahan masuk ke commit atau di
 - tidak adanya auto-fix tersembunyi membuat pengembang tetap mengetahui isi commit.
 
 ## Konsekuensi
+
+Konsekuensi berikut berlaku apabila usulan disetujui. Selama pembahasan berlangsung, npm tetap dipakai sebagai baseline kerja karena tree tersebut sudah lulus instalasi bersih dan CI.
 
 - anggota menjalankan `npm ci`, bukan pnpm atau Yarn;
 - `package-lock.json` wajib ikut berubah ketika dependency berubah;

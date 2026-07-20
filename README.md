@@ -35,6 +35,7 @@ Fondasi ini belum memuat fitur bisnis, koneksi database, scraper, atau RAG. Resp
 | Worker scraper dan RAG | Belum diintegrasikan |
 | CI minimum | Tersedia |
 | Git hooks lokal | Tersedia melalui Lefthook |
+| Keputusan package manager dan struktur fitur | Baseline tersedia; pembahasan tim masih terbuka |
 | Deployment | Belum ditambahkan |
 
 Status ini sengaja ditulis apa adanya. Repositori belum mengklaim fitur, pengujian, atau kesiapan deployment yang memang belum tersedia.
@@ -75,7 +76,9 @@ bht-nexus-api
 
 Backend dibangun sebagai **modular monolith**: satu aplikasi backend yang dibagi menjadi modul-modul dengan tanggung jawab jelas. Scraper dan RAG tetap menggunakan Python, tetapi pekerjaan, status, dan hasilnya dikendalikan melalui API serta database yang sama.
 
-## Teknologi yang Disepakati
+## Baseline Teknis Saat Ini
+
+Tabel berikut menunjukkan baseline yang sedang dipakai agar repository dapat dipasang, diuji, dan dipulihkan secara konsisten. Baseline bukan berarti seluruh detailnya sudah menjadi keputusan final tim. Perubahan package manager atau pola folder tetap dapat diajukan melalui ADR dan pull request tanpa menghapus repository atau riwayat Git.
 
 | Lapisan | Teknologi |
 |---|---|
@@ -167,7 +170,7 @@ npm ci
 
 Gunakan `npm ci`, bukan `npm install`, untuk pemakaian harian setelah clone. `npm ci` memasang versi persis yang sudah dikunci di `package-lock.json` sehingga hasil setiap anggota tim sama. Proses ini juga memasang Git hooks Lefthook yang telah disetujui proyek.
 
-Repository ini memakai npm saja. Jangan menambahkan `pnpm-lock.yaml` atau `yarn.lock` tanpa keputusan arsitektur tertulis karena dua lockfile dapat menghasilkan dependency yang berbeda.
+Baseline repository saat ini memakai npm dan satu `package-lock.json`. Jangan menambahkan `pnpm-lock.yaml` atau `yarn.lock` bersamaan dengan lockfile npm karena dua sumber dependency dapat menghasilkan instalasi berbeda. Jika tim menyetujui perpindahan package manager, seluruh lockfile, CI, Git hooks, dokumentasi, dan perintah pengembangan harus dimigrasikan bersama melalui satu pull request yang dapat ditinjau.
 
 ### 5. Periksa Git hooks
 
