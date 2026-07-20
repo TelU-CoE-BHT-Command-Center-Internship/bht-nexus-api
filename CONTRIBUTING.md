@@ -10,12 +10,27 @@ Panduan ini menjaga agar setiap perubahan mudah dipahami, diuji, ditinjau, dan d
 4. Perbarui dokumentasi ketika kontrak, perilaku, atau keputusan berubah.
 5. Jalankan seluruh pemeriksaan yang tersedia sebelum perubahan dibagikan.
 6. Jangan menutupi pemeriksaan gagal dengan mematikan aturan.
+7. Pertahankan riwayat Git; perubahan struktur tidak memerlukan pembuatan ulang repository.
 
 ## Tahap Persiapan
 
 Repository pernah menerima commit persiapan langsung ke `main` untuk struktur kosong, dokumen kolaborasi, dan bootstrap resmi NestJS. Pengecualian terakhir tersebut hanya berlaku untuk fondasi yang belum memuat fitur bisnis dan harus melewati format, lint, typecheck, test, build, pemeriksaan secret, serta peninjauan diff.
 
 Setelah fondasi NestJS masuk ke `main`, pengecualian berakhir. Penambahan modul, endpoint, database, worker, dependency baru, perubahan CI, atau konfigurasi runtime berikutnya menggunakan branch kerja dan pull request.
+
+## Menjaga Riwayat Repository
+
+Perapian folder, penggantian pola kode, dan pemasangan Git hooks dilakukan sebagai perubahan biasa pada branch. Jangan menghapus lalu membuat ulang repository, menjalankan `git init` di dalam hasil clone, melakukan force push ke `main`, atau mengganti riwayat yang sudah dibagikan.
+
+Jika perubahan besar benar-benar diperlukan:
+
+1. buat issue yang menjelaskan alasan dan dampaknya;
+2. buat branch dari `main` terbaru;
+3. ubah struktur pada branch tersebut;
+4. tampilkan perbedaan melalui pull request;
+5. pertahankan commit lama agar alasan dan kepemilikan pekerjaan tetap dapat ditelusuri.
+
+Git hooks tidak memerlukan repository baru. Setelah dependency dipasang, `npm run hooks:install` cukup untuk memperbarui hook lokal.
 
 ## Alur Kerja Setelah Implementasi Dimulai
 
@@ -34,8 +49,26 @@ Pemeriksaan minimum untuk repository API:
 
 ```powershell
 npm ci
+npm run hooks:validate
 npm run check
 ```
+
+Proyek memakai **npm dan `package-lock.json`** sebagai satu-satunya alur package. Jangan menjalankan migrasi ke pnpm atau Yarn dan jangan menambahkan lockfile kedua tanpa ADR (catatan keputusan arsitektur) yang telah disetujui.
+
+## Pemeriksaan Otomatis Lokal
+
+Lefthook memasang dua pengaman:
+
+- `pre-commit` menjalankan pemeriksaan format, lint, dan tipe;
+- `pre-push` menjalankan unit test, end-to-end test, dan build.
+
+Hook hanya mendeteksi masalah. Hook tidak melakukan auto-fix dan tidak menambahkan file ke staging secara diam-diam. GitHub CI tetap menjadi pemeriksaan resmi karena hook lokal dapat gagal terpasang atau sengaja dilewati saat pemulihan darurat.
+
+## Struktur Fitur NestJS
+
+Backend disusun sebagai modular monolith (satu aplikasi dengan batas modul yang jelas). Kode dikelompokkan berdasarkan fitur bisnis, misalnya `src/modules/publications`, lalu controller, service, DTO, dan repository fitur tersebut berada di dalam modul yang sama.
+
+Jangan membuat folder global `controllers`, `services`, `models`, dan `views` untuk seluruh aplikasi. Pola global tersebut cepat bercampur ketika jumlah fitur bertambah. Lapisan tampilan atau *view* berada di repository web Next.js, bukan di API NestJS.
 
 Contoh nama branch:
 

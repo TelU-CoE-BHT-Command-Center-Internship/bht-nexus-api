@@ -1,0 +1,12 @@
+pre-commit:
+  commands:
+    quality:
+      run: npm run check:commit
+
+pre-push:
+  commands:
+    tests-and-build:
+      run: npm run check:push
+#
+#     - script: "hello.go"
+#       runner: go run

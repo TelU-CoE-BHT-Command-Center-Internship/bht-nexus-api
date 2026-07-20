@@ -12,8 +12,8 @@
   "packageManager": "npm@11.16.0",
   "scripts": {
     "build": "nest build",
-    "format": "prettier --write \"{src,test}/**/*.ts\" \"test/*.json\" \".github/workflows/*.yml\" \".github/dependabot.yml\" \".vscode/*.json\" \"*.{json,mjs}\" \".prettierrc\"",
-    "format:check": "prettier --check \"{src,test}/**/*.ts\" \"test/*.json\" \".github/workflows/*.yml\" \".github/dependabot.yml\" \".vscode/*.json\" \"*.{json,mjs}\" \".prettierrc\"",
+    "format": "prettier --write \"{src,test}/**/*.ts\" \"test/*.json\" \".github/workflows/*.yml\" \".github/dependabot.yml\" \".vscode/*.json\" \"*.{json,mjs}\" \".prettierrc\" \"lefthook.yml\"",
+    "format:check": "prettier --check \"{src,test}/**/*.ts\" \"test/*.json\" \".github/workflows/*.yml\" \".github/dependabot.yml\" \".vscode/*.json\" \"*.{json,mjs}\" \".prettierrc\" \"lefthook.yml\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -27,7 +27,13 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json --runInBand",
-    "check": "npm run format:check && npm run lint && npm run typecheck && npm run test:unit && npm run test:e2e && npm run build"
+    "hooks:install": "lefthook install",
+    "hooks:validate": "lefthook validate",
+    "hooks:run:pre-commit": "lefthook run pre-commit --force",
+    "hooks:run:pre-push": "lefthook run pre-push --force",
+    "check:commit": "npm run format:check && npm run lint && npm run typecheck",
+    "check:push": "npm run test:unit && npm run test:e2e && npm run build",
+    "check": "npm run check:commit && npm run check:push"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -51,6 +57,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^17.0.0",
     "jest": "^30.0.0",
+    "lefthook": "2.1.10",
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
@@ -77,5 +84,9 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "allowScripts": {
+    "lefthook@2.1.10": true,
+    "unrs-resolver": false
   }
 }

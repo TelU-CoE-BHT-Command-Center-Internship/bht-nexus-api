@@ -5,7 +5,7 @@
 **Layanan backend terpadu untuk data, otomasi, scraper, dan RAG dokumen BHT.**
 
 ![Status](https://img.shields.io/badge/status-fondasi_NestJS-475569)
-![Akses](https://img.shields.io/badge/akses-private-7c3aed)
+![Akses](https://img.shields.io/badge/akses-public-2563eb)
 ![Node.js](https://img.shields.io/badge/Node.js-24_LTS-339933)
 ![NestJS](https://img.shields.io/badge/NestJS-11-e0234e)
 
@@ -21,7 +21,7 @@ Backend dan antarmuka web dikelola dalam repositori terpisah. Dengan batas ini, 
 
 ## Status Saat Ini
 
-Repositori berada pada tahap **fondasi NestJS yang dapat dijalankan**. Generator resmi Nest CLI sudah membentuk aplikasi dasar, dependency sudah dikunci melalui `package-lock.json`, dan pemeriksaan format, lint, tipe, test, serta build sudah tersedia.
+Repositori berada pada tahap **fondasi NestJS yang dapat dijalankan**. Generator resmi Nest CLI sudah membentuk aplikasi dasar, dependency sudah dikunci melalui `package-lock.json`, dan pemeriksaan format, lint, tipe, test, serta build sudah tersedia. Git hooks membantu menjalankan pemeriksaan penting sebelum commit dan push tanpa menggantikan pemeriksaan CI di GitHub.
 
 Fondasi ini belum memuat fitur bisnis, koneksi database, scraper, atau RAG. Respons dasar hanya membuktikan bahwa runtime, struktur NestJS, pengujian, dan CI bekerja sebelum modul BHT-Nexus mulai ditambahkan.
 
@@ -34,6 +34,7 @@ Fondasi ini belum memuat fitur bisnis, koneksi database, scraper, atau RAG. Resp
 | Database dan migration | Belum ditambahkan |
 | Worker scraper dan RAG | Belum diintegrasikan |
 | CI minimum | Tersedia |
+| Git hooks lokal | Tersedia melalui Lefthook |
 | Deployment | Belum ditambahkan |
 
 Status ini sengaja ditulis apa adanya. Repositori belum mengklaim fitur, pengujian, atau kesiapan deployment yang memang belum tersedia.
@@ -81,6 +82,7 @@ Backend dibangun sebagai **modular monolith**: satu aplikasi backend yang dibagi
 | Runtime backend | Node.js 24 LTS |
 | Framework API | NestJS 11 dengan Express |
 | Package manager | npm dan `package-lock.json` |
+| Git hooks | Lefthook |
 | ORM | Drizzle ORM |
 | Database | PostgreSQL 18 |
 | Worker | Python 3.12 |
@@ -111,7 +113,7 @@ Prasyarat:
 - Git;
 - PowerShell 7 pada Windows.
 
-Repositori ini bersifat private. Pastikan akun GitHub sudah menjadi anggota proyek dan dapat membuka halaman repositori sebelum melakukan clone.
+Repositori dapat dibaca dan di-clone secara public. Hak tulis tetap terbatas pada anggota yang diberi akses oleh organisasi.
 
 ### 1. Clone repository
 
@@ -122,7 +124,7 @@ git clone https://github.com/TelU-CoE-BHT-Command-Center-Internship/bht-nexus-ap
 Set-Location bht-nexus-api
 ```
 
-`git clone` mengunduh repository beserta riwayat perubahannya. `Set-Location` memindahkan terminal ke dalam folder repository. Jika GitHub meminta autentikasi, masuk melalui jendela browser atau Git Credential Manager menggunakan akun yang mempunyai akses; password akun biasa tidak dipakai sebagai password Git.
+`git clone` mengunduh repository beserta riwayat perubahannya. `Set-Location` memindahkan terminal ke dalam folder repository. Clone public tidak memerlukan token. GitHub baru meminta autentikasi ketika anggota yang berwenang melakukan operasi tulis seperti push.
 
 Jika repository sudah pernah di-clone, jangan clone ulang. Sinkronkan salinan yang ada:
 
@@ -163,9 +165,25 @@ Di terminal VS Code, jalankan:
 npm ci
 ```
 
-Gunakan `npm ci`, bukan `npm install`, untuk pemakaian harian setelah clone. `npm ci` memasang versi persis yang sudah dikunci di `package-lock.json` sehingga hasil setiap anggota tim sama.
+Gunakan `npm ci`, bukan `npm install`, untuk pemakaian harian setelah clone. `npm ci` memasang versi persis yang sudah dikunci di `package-lock.json` sehingga hasil setiap anggota tim sama. Proses ini juga memasang Git hooks Lefthook yang telah disetujui proyek.
 
-### 5. Periksa fondasi
+Repository ini memakai npm saja. Jangan menambahkan `pnpm-lock.yaml` atau `yarn.lock` tanpa keputusan arsitektur tertulis karena dua lockfile dapat menghasilkan dependency yang berbeda.
+
+### 5. Periksa Git hooks
+
+```powershell
+npm run hooks:validate
+```
+
+Jika konfigurasi valid tetapi hook belum terpasang, jalankan sekali:
+
+```powershell
+npm run hooks:install
+```
+
+Hook `pre-commit` memeriksa format, lint, dan tipe TypeScript. Hook `pre-push` menjalankan unit test, end-to-end test, dan build. Hook tidak mengubah atau memasukkan file ke staging secara otomatis, sehingga isi commit tetap berada di bawah kendali pengembang.
+
+### 6. Periksa fondasi
 
 ```powershell
 npm run check
@@ -173,7 +191,7 @@ npm run check
 
 Perintah tersebut memeriksa format, lint, tipe TypeScript, unit test, end-to-end test, dan build. Jangan mulai mengubah kode jika pemeriksaan awal gagal; simpan output error lalu koordinasikan dengan tim.
 
-### 6. Jalankan aplikasi
+### 7. Jalankan aplikasi
 
 ```powershell
 npm run start:dev
@@ -190,7 +208,7 @@ Buka `http://localhost:3000/api/v1`. Fondasi yang sehat mengembalikan:
 
 Biarkan terminal tersebut tetap berjalan selama aplikasi digunakan. Tekan `Ctrl+C` untuk menghentikannya.
 
-### 7. Sebelum mulai mengerjakan tugas
+### 8. Sebelum mulai mengerjakan tugas
 
 ```powershell
 git status
@@ -220,4 +238,6 @@ Daftar ini akan diperbarui mengikuti perkembangan kontribusi pada BHT-Nexus.
 
 ## Akses dan Lisensi
 
-Repositori ini bersifat private dan digunakan untuk pekerjaan internal proyek BHT-Nexus. Belum ada lisensi open-source yang diberikan. Penggunaan, penyalinan, atau distribusi di luar kewenangan organisasi memerlukan persetujuan tertulis dari pihak yang berwenang.
+Kode sumber repository ini dapat dilihat secara public agar pekerjaan, dokumentasi, dan kualitas teknis mudah ditinjau. Keterlihatan public **bukan** pemberian lisensi open-source. Belum ada izin umum untuk menggunakan, menyalin, memodifikasi, atau mendistribusikan kode di luar kewenangan organisasi.
+
+Nilai `"private": true` pada `package.json` sengaja dipertahankan untuk mencegah package terpublikasi tidak sengaja ke registry npm; nilai tersebut tidak menentukan visibility repository GitHub.

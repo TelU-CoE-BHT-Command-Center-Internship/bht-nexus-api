@@ -10,6 +10,7 @@ Dokumen ini menjelaskan cara tanggung jawab dan keputusan dikelola tanpa bergant
 4. Perubahan berisiko memerlukan bukti dan peninjauan yang lebih kuat.
 5. Keamanan, privasi, audit, dan pemulihan bukan pekerjaan tambahan di akhir.
 6. Keputusan penting dari chat atau meeting dipindahkan ke dokumen resmi.
+7. Riwayat Git dan kontribusi yang sudah dibagikan dipertahankan sebagai bagian dari jejak audit proyek.
 
 ## Tanggung Jawab
 
@@ -32,7 +33,13 @@ Pembagian orang untuk setiap tanggung jawab akan mengikuti kesepakatan tim dan d
 
 Tahap persiapan awal mencakup struktur kosong, standar repository, dan satu bootstrap resmi NestJS tanpa fitur bisnis. Rangkaian tersebut boleh masuk langsung ke `main` sebagai pengecualian terdokumentasi setelah seluruh pemeriksaan lulus dan diff dibaca menyeluruh.
 
-Pengecualian berakhir setelah fondasi NestJS tersedia. Mulai dari modul atau perilaku aplikasi pertama, perubahan menggunakan issue, branch, pull request, CI, dan review manusia. Perlindungan `main` diaktifkan ketika paket GitHub organisasi mendukung repository private; sebelum itu aturan yang sama dijalankan sebagai prosedur wajib tim.
+Pengecualian berakhir setelah fondasi NestJS tersedia. Mulai dari perubahan berikutnya, termasuk alat pengembangan dan struktur aplikasi, pekerjaan menggunakan issue, branch, pull request, CI, dan review manusia. Repository public memungkinkan perlindungan `main` diterapkan sebagai pengaman teknis, bukan hanya kesepakatan lisan.
+
+## Keberlanjutan Repository
+
+Repository tidak dihapus atau diinisialisasi ulang hanya untuk merapikan struktur, mengganti package manager, atau memasang Git hooks. Perubahan tersebut diterapkan melalui commit biasa agar pekerjaan setiap kontributor tetap terlihat dan dapat dipulihkan.
+
+Penghapusan repository, perubahan visibility, force push, atau penulisan ulang riwayat hanya boleh dilakukan untuk pemulihan yang terdokumentasi, setelah salinan cadangan diverifikasi dan pihak yang berwenang menyetujui dampaknya.
 
 ## Catatan Keputusan
 
