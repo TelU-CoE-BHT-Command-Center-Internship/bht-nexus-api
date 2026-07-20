@@ -40,15 +40,17 @@ Konsekuensi berikut berlaku apabila usulan disetujui. Selama pembahasan berlangs
 - keadaan darurat yang melewati hook tetap harus lulus CI dan dijelaskan pada pull request;
 - dependency Lefthook dipelihara melalui Dependabot seperti dependency pengembangan lain.
 
-## Pilihan yang Tidak Dipakai
+## Alternatif yang Masih Dibahas
 
 ### pnpm
 
-pnpm merupakan package manager yang baik, tetapi tidak dipakai pada tahap ini karena fondasi, dokumentasi, dan CI sudah konsisten memakai npm. Pergantian tanpa kebutuhan terukur hanya menambah migrasi dan dua alur kerja.
+pnpm merupakan package manager yang layak dipertimbangkan. Baseline pemulihan tetap memakai npm karena fondasi, dokumentasi, dan CI yang dipulihkan sudah konsisten serta lulus pemeriksaan dengan npm. Hal ini tidak berarti pnpm sudah ditolak.
+
+Jika tim memilih pnpm, perpindahan harus dilakukan dalam satu pull request yang sekaligus menyelaraskan versi package manager, lockfile, CI, Git hooks, dokumentasi, dan cara deployment. Tim kemudian membandingkan hasilnya berdasarkan kemudahan anggota, kecepatan instalasi, penggunaan disk, dukungan deployment, dan konsistensi CI.
 
 ### Hook yang melakukan auto-fix dan auto-stage
 
-Pilihan ini tidak dipakai karena dapat mengubah isi commit tanpa terlihat jelas oleh pengembang. Perbaikan format tetap dilakukan secara sadar melalui `npm run format`.
+Baseline pemulihan tidak memakai auto-fix atau auto-stage karena keduanya dapat mengubah isi commit tanpa terlihat jelas oleh pengembang. Perbaikan format saat ini dilakukan secara sadar melalui `npm run format`. Perilaku hook dapat dibahas kembali setelah tim memperoleh pengalaman penggunaan, tetapi perubahan harus tetap terlihat melalui pull request.
 
 ## Cara Verifikasi
 

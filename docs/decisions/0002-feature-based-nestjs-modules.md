@@ -55,6 +55,8 @@ Konsekuensi berikut berlaku apabila usulan disetujui. Sampai tim mengambil keput
 - satu fitur dapat memiliki subfolder tambahan ketika kebutuhannya nyata, tetapi tidak dibuat hanya sebagai placeholder;
 - `AppModule` menjadi pintu penggabung modul, bukan tempat menumpuk seluruh aturan bisnis.
 
-## Pilihan yang Tidak Dipakai
+## Alternatif yang Masih Dibahas
 
-Struktur MVC global tidak dipakai karena bagian *view* berada pada aplikasi web terpisah dan folder controller/service global akan bercampur ketika modul bertambah. Konsep pemisahan tanggung jawab MVC tetap dihormati melalui controller, service, repository/data, dan web terpisah, tetapi organisasi folder mengikuti pola feature module NestJS.
+Struktur global yang disebut MVC belum ditolak dan belum diterima. Istilah tersebut perlu diterjemahkan menjadi pohon folder konkret karena bagian *view* berada pada aplikasi web Next.js yang terpisah, sedangkan repository ini hanya menangani API dan worker.
+
+Jika struktur lain diusulkan, pull request contoh perlu menunjukkan lokasi controller, aturan bisnis/service, akses data/model atau repository, DTO dan validasi, serta test. Tim kemudian membandingkannya dengan modul per fitur berdasarkan kemudahan belajar, kemudahan mencari file, pemisahan tanggung jawab, kualitas test, dan kebutuhan jangka panjang BHT-Nexus.
