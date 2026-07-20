@@ -5,6 +5,7 @@
     "author": "",
     "private": true,
     "license": "UNLICENSED",
+    "packageManager": "pnpm@10.26.1",
     "scripts": {
         "build": "nest build",
         "format": "prettier --write \"{src,test}/**/*.ts\" \"test/*.json\" \".github/workflows/*.yml\" \".github/dependabot.yml\" \".vscode/*.json\" \"*.{json,mjs}\" \".prettierrc\"",
