@@ -1,0 +1,743 @@
+/* 
+  table users, account, verifications, dan sessions 
+  disesuaikan untuk schema yang dibutuhkan oleh better-auth
+  (authentication)
+*/
+
+/* 
+  rules:
+    1. all syntax must be lowercase  
+    2. all tables must be plurals
+    3. all tables must be implement soft deletes 
+    4. all tables must be included public_id to safety issues
+    5. notes syntax must be at the bottom of table's column
+*/
+
+enum status { 
+  active
+  inactive
+}
+
+enum user_status { 
+  active 
+  inactive
+}
+
+enum role_types { 
+  coe_core 
+  coe_member 
+  coe_intern 
+  coe_internal
+  coe_external
+}
+
+enum mentoring_status {
+  active
+  ended
+}
+
+enum reference_data_type {
+  activity_category
+  research_field
+  collaboration_type
+}
+
+enum partnership_status {
+  draft
+  active
+  ended
+}
+
+enum activity_status {
+  draft
+  submitted
+  in_review
+  revision_requested
+  approved
+  in_progress
+  completed
+  late
+}
+
+enum visibility_level {
+  public
+  internal
+  restricted
+}
+
+enum participant_role {
+  owner
+  contributor
+  supervisor
+  participant
+}
+
+enum approval_entity_type {
+  activity
+  publication
+  report
+}
+
+enum approval_step_status {
+  pending
+  approved
+  revision_requested
+  rejected
+}
+
+enum content_status {
+  draft
+  in_review
+  published
+}
+
+enum report_period_type {
+  monthly
+  semesterly
+  yearly
+  custom
+}
+
+enum notification_type {
+  due_date_reminder
+  approval_escalation
+  partnership_expiry
+}
+
+enum audit_action {
+  create
+  update
+  delete
+  approve
+}
+
+//=== AUTHENTICATION
+
+table users { 
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  role_id integer [ref: > roles.id]
+  division_id integer [ref: > divisions.id]
+
+  // essentsials column
+  name varchar(100) [not null]
+  email varchar(255) [not null, unique]
+  password text [not null, note: 'password hassed by system'] 
+  /* 
+    PASSWORD RULES: 
+      1. at least 8 char
+      2. at least a number, special char, and capitalize 
+      3. must be hashed
+  */
+  status user_status [not null, default: 'active']
+
+  // default better-auth column 
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'default users is coe_intern. status digunakan untuk filter status keaktifan pada direktori anggota (fr-03)'
+}
+
+// default authentciation relations nanti dihandle oleh better-auth (authentication)
+
+table accounts { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+
+  // default better-auth column 
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table verifications { 
+  id serial pk  
+  public_id uuid [default: `gen_random_uuid()`]
+
+  // default better-auth column 
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table sessions { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+
+  // default better-auth column 
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+/* 
+  must be discuss about role!
+*/
+
+table roles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+
+  name varchar(100) [not null, unique, note: 'cth: coe_intern, coe_member']
+  description text 
+  type role_types [default: 'coe_member']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+//=== USERS PROFILES
+
+table director_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id, unique]
+
+  appointment_start date [not null]
+  appointment_end date
+  decree_number varchar(100) [note: 'nomor SK pengangkatan, opsional']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-01: riwayat masa jabatan direktur'
+}
+
+table division_head_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id, unique]
+  division_id integer [ref: > divisions.id, not null]
+
+  appointment_start date [not null]
+  appointment_end date
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (division_id, appointment_end)
+  }
+
+  note: 'fr-02, fr-09, fr-35: division_id = divisi yang dipimpin. sebaiknya hanya 1 kepala divisi aktif (appointment_end null) per divisi, divalidasi di application layer'
+}
+
+table research_lead_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id, unique]
+  research_field_id integer [ref: > reference_data.id]
+
+  position_title varchar(100)
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-08, fr-13: research_field_id mengacu reference_data (type=research_field)'
+}
+
+table research_members_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id, unique]
+  research_field_id integer [ref: > reference_data.id]
+
+  joined_date date
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table lecturer_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestampa
+
+  note: 'kemungkinan besar untuk lecturer (dosen) dan mentor memiliki data yang sama'
+}
+
+table mentee_internship_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table research_assistant_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table faculty_partner_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table prodi_partner_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+table academic_partner_profiles { 
+  id serial pk 
+  public_id uuid [default: `gen_random_uuid()`]
+  user_id integer [ref: > users.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+}
+
+//=== MENTORING
+
+table mentoring_relationships {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+
+  mentor_id integer [ref: > users.id, note: 'pembimbing, penetapan dilakukan oleh admin/kepala divisi']
+  mentee_id integer [ref: > users.id, note: 'mentee/research assistant yang dibimbing']
+
+  status mentoring_status [not null, default: 'active']
+  start_date date [not null]
+  end_date date [note: 'diisi otomatis saat relasi diakhiri, wajib ada jika status = ended']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (mentee_id, status)
+    (mentor_id, status)
+  }
+
+  note: 'fr-41: relasi bimbingan aktif menentukan cakupan akses pembimbing terhadap log aktivitas mentee (fr-11). satu mentee sebaiknya hanya punya satu relasi berstatus active pada satu waktu, divalidasi di application layer/constraint'
+}
+
+//=== ORGANIZATION PROFILES 
+
+table organizations {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+
+  name varchar(150) [not null]
+  vision text
+  mission text
+  history text
+  contact_email varchar(255)
+  contact_phone varchar(30)
+  address text
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-01: profil organisasi dikelola oleh admin dan direktur'
+}
+
+table divisions {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  organization_id integer [ref: > organizations.id]
+
+  name varchar(100) [not null]
+  description text
+  status status [not null, default: 'active']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-02: struktur divisi menjadi referensi bagi modul kegiatan dan pelaporan'
+}
+
+//=== REFERENCE DATA
+
+table reference_data {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+
+  type reference_data_type [not null]
+  name varchar(100) [not null]
+  description text
+  status status [not null, default: 'active']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (type, name) [unique]
+  }
+
+  note: 'fr-06: data referensi hanya dinonaktifkan (status=inactive), tidak dihapus permanen, agar data historis yang menggunakannya tetap valid'
+}
+
+//=== PARTNERS
+
+table partners {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+
+  name varchar(150) [not null]
+  type varchar(100)
+  contact_name varchar(100)
+  contact_email varchar(255)
+  contact_phone varchar(30)
+  current_status partnership_status [not null, default: 'draft']
+  end_date date
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-05, fr-20: current_status adalah status terkini, riwayat lengkap tercatat pada partnership_status_histories'
+}
+
+table partnership_status_histories {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  partner_id integer [ref: > partners.id]
+  changed_by integer [ref: > users.id]
+
+  status partnership_status [not null]
+  notes text
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-05: riwayat status kerja sama tercatat beserta waktu dan pihak yang melakukan perubahan'
+}
+
+//=== PROGRAMS & ACTIVITIES
+
+table programs {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  division_id integer [ref: > divisions.id]
+
+  name varchar(150) [not null]
+  description text
+  visibility visibility_level [not null, default: 'internal']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-25: program menjadi payung dari beberapa kegiatan pada katalog'
+}
+
+table activities {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  program_id integer [ref: > programs.id]
+  division_id integer [ref: > divisions.id]
+  created_by integer [ref: > users.id]
+
+  title varchar(200) [not null]
+  type varchar(100) [not null]
+  description text
+  activity_date date [not null]
+  due_date date
+  status activity_status [not null, default: 'draft']
+  visibility visibility_level [not null, default: 'internal']
+  is_locked boolean [not null, default: false]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-08, fr-09, fr-16, fr-17, fr-25: status diturunkan dari tabel approvals, tidak diubah manual. is_locked ditegakkan lewat trigger/constraint'
+}
+
+table activity_tags {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  activity_id integer [ref: > activities.id]
+  reference_data_id integer [ref: > reference_data.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (activity_id, reference_data_id) [unique]
+  }
+
+  note: 'fr-15: klasifikasi kegiatan berdasarkan kategori/tag dari data referensi terpusat'
+}
+
+table activity_participants {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  activity_id integer [ref: > activities.id]
+  user_id integer [ref: > users.id]
+
+  role participant_role [not null]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (activity_id, user_id, role) [unique]
+  }
+
+  note: 'fr-13: peserta dan peran dalam suatu kegiatan'
+}
+
+table activity_logs {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  activity_id integer [ref: > activities.id]
+  user_id integer [ref: > users.id]
+
+  description text [not null]
+  logged_at timestamp [not null]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-10: catatan aktivitas harian/mingguan mentee dan research assistant, cakupan akses pembimbing mengikuti mentoring_relationships yang aktif (fr-11, fr-41)'
+}
+
+//=== DOCUMENTS
+
+table documents {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  uploaded_by integer [ref: > users.id]
+
+  related_type varchar(50) [not null, note: 'cth: activity, partnership, report']
+  related_id integer [not null]
+  file_name varchar(255) [not null]
+  file_type varchar(50) [not null]
+  file_size integer [not null, note: 'ukuran dalam bytes']
+  file_url text [not null, note: 'lokasi berkas di object storage, bukan blob di database']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-12: dokumen pendukung disimpan sebagai metadata, berkas fisik berada di object storage terpisah'
+}
+
+//=== APPROVALS
+
+table approvals {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  approver_id integer [ref: > users.id]
+
+  entity_type approval_entity_type [not null]
+  entity_id integer [not null]
+  step varchar(50) [not null, note: 'cth: division_head_review, director_approval']
+  status approval_step_status [not null, default: 'pending']
+  notes text
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  indexes {
+    (entity_type, entity_id)
+  }
+
+  note: 'fr-09, fr-24, fr-35: satu state machine approval generik untuk kegiatan, publikasi, dan laporan'
+}
+
+//=== NEWS & PUBLICATIONS
+
+table news_announcements {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  division_id integer [ref: > divisions.id]
+  created_by integer [ref: > users.id]
+
+  title varchar(200) [not null]
+  body text [not null]
+  status content_status [not null, default: 'draft']
+  visibility visibility_level [not null, default: 'internal']
+  published_at timestamp
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-23: berita/pengumuman melalui alur draft, tinjau, terbit'
+}
+
+table announcement_targets {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  news_announcement_id integer [ref: > news_announcements.id]
+  target_role_id integer [ref: > roles.id]
+  target_division_id integer [ref: > divisions.id]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-27: target penerima informasi berdasarkan role dan/atau divisi'
+}
+
+table publications {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  submitted_by integer [ref: > users.id]
+
+  title varchar(200) [not null]
+  body text [not null]
+  status content_status [not null, default: 'draft']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-24: draf publikasi capaian anggota, harus melalui approvals sebelum terbit'
+}
+
+//=== REPORTS
+
+table report_templates {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  created_by integer [ref: > users.id]
+
+  name varchar(150) [not null]
+  structure text [not null, note: 'format/struktur template, cth: json schema']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-32: template laporan yang dapat digunakan berulang'
+}
+
+table reports {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  template_id integer [ref: > report_templates.id]
+  division_id integer [ref: > divisions.id]
+  created_by integer [ref: > users.id]
+
+  title varchar(200) [not null]
+  period_type report_period_type [not null]
+  period_start date [not null]
+  period_end date [not null]
+  status content_status [not null, default: 'draft']
+  is_locked boolean [not null, default: false]
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-30, fr-31, fr-34: is_locked ditegakkan lewat constraint agar laporan terbit tidak dapat diubah (fr-39)'
+}
+
+table report_snapshots {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  report_id integer [ref: > reports.id]
+
+  frozen_data text [not null, note: 'salinan beku isi laporan dalam format json saat diterbitkan, bukan referensi hidup ke data sumber']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-36: isi laporan terbit tidak berubah meski data sumber berubah'
+}
+
+//=== NOTIFICATIONS
+
+table notification_settings {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+
+  type notification_type [not null, unique]
+  threshold_value integer [not null, note: 'jumlah dalam satuan waktu, cth: 3']
+  threshold_unit varchar(20) [not null, note: 'cth: days, hours']
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-38: ambang waktu notifikasi diatur oleh admin'
+}
+
+table notifications {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  recipient_id integer [ref: > users.id]
+
+  type notification_type [not null]
+  related_type varchar(50)
+  related_id integer
+  message text [not null]
+  is_read boolean [not null, default: false]
+  sent_at timestamp
+
+  created_at timestamp [default: `now()`]
+  updated_at timestamp 
+  deleted_at timestamp
+
+  note: 'fr-18, fr-19: pengingat tenggat kegiatan dan eskalasi persetujuan tertunda, dihasilkan oleh scheduled job'
+}
+
+//=== AUDIT
+
+table audit_logs {
+  id serial pk
+  public_id uuid [default: `gen_random_uuid()`]
+  actor_id integer [ref: > users.id]
+
+  entity_type varchar(50) [not null]
+  entity_id integer [not null]
+  action audit_action [not null]
+  field_changed varchar(100)
+  old_value text
+  new_value text
+
+  created_at timestamp [default: `now()`]
+
+  indexes {
+    (entity_type, entity_id)
+    (created_at)
+  }
+
+  note: 'fr-14, fr-40: satu-satunya sumber riwayat perubahan untuk seluruh entitas utama, sebaiknya dipartisi per periode. sengaja tanpa updated_at/deleted_at karena audit log bersifat append-only dan tidak boleh diubah/dihapus'
+}

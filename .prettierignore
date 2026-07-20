@@ -24,3 +24,6 @@ yarn.lock
 # git
 .git
 .gitignore
+
+# package.json (prevent prettier from breaking escaped quotes in scripts)
+package.json
