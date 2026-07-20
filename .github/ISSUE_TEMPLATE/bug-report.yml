@@ -1,0 +1,93 @@
+name: Laporan Bug
+description: Laporkan perilaku yang salah atau tidak sesuai harapan.
+title: "[Bug]: "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Terima kasih sudah membantu memperbaiki BHT-Nexus. Jangan sertakan password, token, private key, data pribadi, atau dokumen sensitif.
+
+  - type: checkboxes
+    id: initial_checks
+    attributes:
+      label: Pemeriksaan awal
+      options:
+        - label: Saya sudah mencari issue serupa dan belum menemukan laporan yang sama.
+          required: true
+        - label: Laporan ini bukan kerentanan keamanan.
+          required: true
+
+  - type: textarea
+    id: summary
+    attributes:
+      label: Ringkasan masalah
+      description: Jelaskan masalah secara singkat dan spesifik.
+      placeholder: Saat pengguna melakukan ..., sistem menampilkan ...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Komponen terdampak
+      options:
+        - API atau autentikasi
+        - Database atau migration
+        - Impor atau peninjauan data
+        - Scraper Google Scholar atau SINTA
+        - RAG dokumen
+        - Dokumentasi atau tooling
+        - Belum diketahui
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Langkah reproduksi
+      description: Tuliskan langkah berurutan agar masalah dapat diulang.
+      placeholder: |
+        1. Buka ...
+        2. Isi ...
+        3. Tekan ...
+        4. Terjadi ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual_result
+    attributes:
+      label: Hasil aktual
+      description: Apa yang benar-benar terjadi?
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected_result
+    attributes:
+      label: Hasil yang diharapkan
+      description: Apa yang seharusnya terjadi?
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Lingkungan
+      description: Sebutkan branch/commit, sistem operasi, versi runtime, browser, atau lingkungan deployment yang relevan.
+      placeholder: main pada commit ..., Windows 11, Node.js 24, PostgreSQL 18
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Log atau bukti yang sudah disanitasi
+      description: Hapus token, cookie, data pribadi, dan informasi sensitif sebelum menempelkan bukti.
+      render: shell
+
+  - type: textarea
+    id: additional_context
+    attributes:
+      label: Konteks tambahan
+      description: Tambahkan informasi lain yang benar-benar membantu diagnosis.

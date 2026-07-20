@@ -1,0 +1,21 @@
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: "*.{js,ts,json,css,md}"
+      run: pnpm lint --fix
+      stage_fixed: true
+    format:
+      glob: "*.{js,ts,json,css,md}"
+      run: pnpm format
+      stage_fixed: true
+    typecheck:
+      glob: "*.{ts,js}"
+      run: pnpm typecheck
+
+pre-push:
+  commands:
+    test:
+      run: pnpm test:unit
+    build:
+      run: pnpm build
