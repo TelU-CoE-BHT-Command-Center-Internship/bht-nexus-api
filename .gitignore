@@ -54,3 +54,16 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# File types
+*.txt
+*.dbml
+
+# Ignore all .md files except specific ones
+*.md
+!CODE_OF_CONDUCT.md
+!CONTRIBUTING.md
+!README.md
+!SECURITY.md
+!SUPPORT.md
+!GOVERNANCE.md  
