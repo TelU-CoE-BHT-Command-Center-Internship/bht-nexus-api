@@ -1,8 +1,8 @@
 import { date, index, pgTable, text } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { mentoringStatusEnum } from '../../configs/enum'
-import { users } from './role-schema'
+import { mentoringStatusEnum } from '../../constant/enum'
+import { users } from './user-schema'
 
 export const mentoringRelationships = pgTable(
     'mentoring_relationships',
@@ -23,11 +23,11 @@ export const mentoringRelationships = pgTable(
         ...timestamps
     },
     table => [
-        index('mentoring_relationships_mentee_status_idx').on(
+        index('idx_mentoring_relationships_mentee_status').on(
             table.menteeId,
             table.status
         ),
-        index('mentoring_relationships_mentor_status_idx').on(
+        index('idx_mentoring_relationships_mentor_status').on(
             table.mentorId,
             table.status
         )

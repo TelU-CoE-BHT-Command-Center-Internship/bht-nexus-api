@@ -1,7 +1,7 @@
 import { index, pgTable, text, timestamp, varchar } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
-import { auditActionEnum } from '../../configs/enum'
-import { users } from './role-schema'
+import { auditActionEnum } from '../../constant/enum'
+import { users } from './user-schema'
 
 export const auditLogs = pgTable(
     'audit_logs',
@@ -25,7 +25,9 @@ export const auditLogs = pgTable(
             .notNull()
     },
     table => [
-        index('audit_logs_entity_idx').on(table.entityType, table.entityId),
-        index('audit_logs_created_at_idx').on(table.createdAt)
+        index('idx_audit_logs_entity').on(table.entityType, table.entityId),
+        index('idx_audit_logs_created_at').on(table.createdAt),
+        index('idx_audit_logs_actor').on(table.actorId),
+        index('idx_audit_logs_action').on(table.action)
     ]
 )

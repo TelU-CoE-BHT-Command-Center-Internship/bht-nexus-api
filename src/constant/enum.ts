@@ -22,12 +22,16 @@ export const REFERENCE_DATA_TYPE_VALUES = [
 
 export const PARTNERSHIP_STATUS_VALUES = ['draft', 'active', 'ended'] as const
 
-export const ACTIVITY_STATUS_VALUES = [
+export const APPROVAL_STATUS_VALUES = [
     'draft',
     'submitted',
     'in_review',
     'revision_requested',
-    'approved',
+    'approved'
+] as const
+
+export const EXECUTION_STATUS_VALUES = [
+    'not_started',
     'in_progress',
     'completed',
     'late'
@@ -91,7 +95,8 @@ export type RoleTypes = (typeof ROLE_TYPES_VALUES)[number]
 export type MentoringStatus = (typeof MENTORING_STATUS_VALUES)[number]
 export type ReferenceDataType = (typeof REFERENCE_DATA_TYPE_VALUES)[number]
 export type PartnershipStatus = (typeof PARTNERSHIP_STATUS_VALUES)[number]
-export type ActivityStatus = (typeof ACTIVITY_STATUS_VALUES)[number]
+export type ApprovalStatus = (typeof APPROVAL_STATUS_VALUES)[number]
+export type ExecutionStatus = (typeof EXECUTION_STATUS_VALUES)[number]
 export type VisibilityLevel = (typeof VISIBILITY_LEVEL_VALUES)[number]
 export type ParticipantRole = (typeof PARTICIPANT_ROLE_VALUES)[number]
 export type ApprovalEntityType = (typeof APPROVAL_ENTITY_TYPE_VALUES)[number]
@@ -116,9 +121,13 @@ export const partnershipStatusEnum = pgEnum(
     'partnership_status',
     PARTNERSHIP_STATUS_VALUES
 )
-export const activityStatusEnum = pgEnum(
-    'activity_status',
-    ACTIVITY_STATUS_VALUES
+export const approvalStatusEnum = pgEnum(
+    'approval_status',
+    APPROVAL_STATUS_VALUES
+)
+export const executionStatusEnum = pgEnum(
+    'execution_status',
+    EXECUTION_STATUS_VALUES
 )
 export const visibilityLevelEnum = pgEnum(
     'visibility_level',
@@ -154,7 +163,8 @@ export const pgEnums = {
     mentoring_status: mentoringStatusEnum,
     reference_data_type: referenceDataTypeEnum,
     partnership_status: partnershipStatusEnum,
-    activity_status: activityStatusEnum,
+    approval_status: approvalStatusEnum,
+    execution_status: executionStatusEnum,
     visibility_level: visibilityLevelEnum,
     participant_role: participantRoleEnum,
     approval_entity_type: approvalEntityTypeEnum,
@@ -180,7 +190,8 @@ export const allPgEnumSql = Object.entries({
     mentoring_status: MENTORING_STATUS_VALUES,
     reference_data_type: REFERENCE_DATA_TYPE_VALUES,
     partnership_status: PARTNERSHIP_STATUS_VALUES,
-    activity_status: ACTIVITY_STATUS_VALUES,
+    approval_status: APPROVAL_STATUS_VALUES,
+    execution_status: EXECUTION_STATUS_VALUES,
     visibility_level: VISIBILITY_LEVEL_VALUES,
     participant_role: PARTICIPANT_ROLE_VALUES,
     approval_entity_type: APPROVAL_ENTITY_TYPE_VALUES,

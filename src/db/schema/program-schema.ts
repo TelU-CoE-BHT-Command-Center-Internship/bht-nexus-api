@@ -1,17 +1,26 @@
-import { pgTable, text, varchar } from 'drizzle-orm/pg-core'
+import { index, pgTable, text, varchar } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { visibilityLevelEnum } from '../../configs/enum'
+import { visibilityLevelEnum } from '../../constant/enum'
 import { divisions } from './organization-schema'
 
-export const programs = pgTable('programs', {
-    ...baseSchema('program'),
+export const programs = pgTable(
+    'programs',
+    {
+        ...baseSchema('program'),
 
-    divisionId: text('division_id').references(() => divisions.id),
+        divisionId: text('division_id').references(() => divisions.id),
 
-    name: varchar('name', { length: 150 }).notNull(),
-    description: text('description'),
-    visibility: visibilityLevelEnum('visibility').notNull().default('internal'),
+        name: varchar('name', { length: 150 }).notNull(),
+        description: text('description'),
+        visibility: visibilityLevelEnum('visibility')
+            .notNull()
+            .default('internal'),
 
-    ...timestamps
-})
+        ...timestamps
+    },
+    table => [
+        index('idx_programs_division_id').on(table.divisionId),
+        index('idx_programs_visibility').on(table.visibility)
+    ]
+)

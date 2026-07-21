@@ -1,33 +1,55 @@
-import { pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { index, pgTable, text, uniqueIndex, varchar } from 'drizzle-orm/pg-core'
+import { sql } from 'drizzle-orm'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { statusEnum, referenceDataTypeEnum } from '../../configs/enum'
+import { statusEnum, referenceDataTypeEnum } from '../../constant/enum'
 
-export const organizations = pgTable('organizations', {
-    ...baseSchema('organization'),
+export const organizations = pgTable(
+    'organizations',
+    {
+        ...baseSchema('organization'),
 
-    name: varchar('name', { length: 150 }).notNull(),
-    vision: text('vision'),
-    mission: text('mission'),
-    history: text('history'),
-    contactEmail: varchar('contact_email', { length: 255 }),
-    contactPhone: varchar('contact_phone', { length: 30 }),
-    address: text('address'),
+        name: varchar('name', { length: 150 }).notNull(),
+        vision: text('vision'),
+        mission: text('mission'),
+        history: text('history'),
+        contactEmail: varchar('contact_email', { length: 255 }),
+        contactPhone: varchar('contact_phone', { length: 30 }),
+        address: text('address'),
 
-    ...timestamps
-})
+        ...timestamps
+    },
+    table => [
+        index('idx_organizations_active')
+            .on(table.id)
+            .where(sql`${table.deleted_at} IS NULL`)
+    ]
+)
 
-export const divisions = pgTable('divisions', {
-    ...baseSchema('division'),
+export const divisions = pgTable(
+    'divisions',
+    {
+        ...baseSchema('division'),
 
-    organizationId: text('organization_id').references(() => organizations.id),
+        organizationId: text('organization_id').references(
+            () => organizations.id
+        ),
 
-    name: varchar('name', { length: 100 }).notNull(),
-    description: text('description'),
-    status: statusEnum('status').notNull().default('active'),
+        name: varchar('name', { length: 100 }).notNull(),
+        description: text('description'),
+        status: statusEnum('status').notNull().default('active'),
 
-    ...timestamps
-})
+        ...timestamps
+    },
+    table => [
+        index('idx_divisions_organization_id').on(table.organizationId),
+        index('idx_divisions_status').on(table.status),
+        uniqueIndex('idx_divisions_org_name').on(
+            table.organizationId,
+            table.name
+        )
+    ]
+)
 
 export const referenceData = pgTable(
     'reference_data',
@@ -42,9 +64,7 @@ export const referenceData = pgTable(
         ...timestamps
     },
     table => [
-        uniqueIndex('reference_data_type_name_unique').on(
-            table.type,
-            table.name
-        )
+        uniqueIndex('idx_reference_data_type_name').on(table.type, table.name),
+        index('idx_reference_data_type_status').on(table.type, table.status)
     ]
 )

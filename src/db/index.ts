@@ -1,6 +1,6 @@
 import { Pool } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-serverless'
-import env from 'src/configs/env'
+import env from 'src/config/env'
 
 const pool = new Pool({
     connectionString: env.DATABASE_URL,
@@ -9,6 +9,6 @@ const pool = new Pool({
     connectionTimeoutMillis: 10000
 })
 
-const db = drizzle({ client: pool })
+const db = drizzle({ client: pool, logger: true })
 
 export { db, pool }

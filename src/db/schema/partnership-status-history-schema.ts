@@ -1,9 +1,9 @@
-import { pgTable, text } from 'drizzle-orm/pg-core'
+import { index, pgTable, text } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { partnershipStatusEnum } from '../../configs/enum'
+import { partnershipStatusEnum } from '../../constant/enum'
 import { partners } from './partner-schema'
-import { users } from './role-schema'
+import { users } from './user-schema'
 
 export const partnershipStatusHistories = pgTable(
     'partnership_status_histories',
@@ -17,5 +17,9 @@ export const partnershipStatusHistories = pgTable(
         notes: text('notes'),
 
         ...timestamps
-    }
+    },
+    table => [
+        index('idx_partnership_histories_partner_id').on(table.partnerId),
+        index('idx_partnership_histories_created_at').on(table.created_at)
+    ]
 )

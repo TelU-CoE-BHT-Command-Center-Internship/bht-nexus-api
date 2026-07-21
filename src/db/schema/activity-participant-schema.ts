@@ -1,8 +1,8 @@
-import { pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
+import { index, pgTable, text, uniqueIndex } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { participantRoleEnum } from '../../configs/enum'
-import { users } from './role-schema'
+import { participantRoleEnum } from '../../constant/enum'
+import { users } from './user-schema'
 import { activities } from './activity-schema'
 
 export const activityParticipants = pgTable(
@@ -18,10 +18,11 @@ export const activityParticipants = pgTable(
         ...timestamps
     },
     table => [
-        uniqueIndex('activity_user_roles_unique').on(
+        uniqueIndex('idx_activity_participants_unique').on(
             table.activityId,
             table.userId,
             table.role
-        )
+        ),
+        index('idx_activity_participants_user_id').on(table.userId)
     ]
 )

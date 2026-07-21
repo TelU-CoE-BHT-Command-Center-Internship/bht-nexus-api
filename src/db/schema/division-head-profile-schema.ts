@@ -1,7 +1,7 @@
 import { date, index, pgTable, text } from 'drizzle-orm/pg-core'
 import { baseSchema } from '../helper/base-schema'
 import { timestamps } from '../helper/timestamp'
-import { users } from './role-schema'
+import { users } from './user-schema'
 import { divisions } from './organization-schema'
 
 export const divisionHeadProfiles = pgTable(
@@ -22,7 +22,7 @@ export const divisionHeadProfiles = pgTable(
         ...timestamps
     },
     table => [
-        index('division_head_division_appointment_idx').on(
+        index('idx_division_head_division_appointment').on(
             table.divisionId,
             table.appointmentEnd
         )

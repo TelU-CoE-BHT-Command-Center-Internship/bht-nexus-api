@@ -4,8 +4,8 @@ import { timestamps } from '../helper/timestamp'
 import {
     approvalEntityTypeEnum,
     approvalStepStatusEnum
-} from '../../configs/enum'
-import { users } from './role-schema'
+} from '../../constant/enum'
+import { users } from './user-schema'
 
 export const approvals = pgTable(
     'approvals',
@@ -23,6 +23,8 @@ export const approvals = pgTable(
         ...timestamps
     },
     table => [
-        index('approvals_entity_idx').on(table.entityType, table.entityId)
+        index('idx_approvals_entity').on(table.entityType, table.entityId),
+        index('idx_approvals_approver_id').on(table.approverId),
+        index('idx_approvals_status').on(table.status)
     ]
 )
